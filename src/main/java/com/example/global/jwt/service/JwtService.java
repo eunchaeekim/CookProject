@@ -20,7 +20,7 @@ import java.util.Optional;
 @Slf4j
 public class JwtService {
 
-  /**
+  /** (전체 스텝)
    * 유저가 로그인 시도: 클라이언트에서 로그인 요청을 보내고, 이 요청을 서버가 받습니다.
    * createAccessToken 메소드 호출: createAccessToken 메소드는 AccessToken을 생성합니다.
    * createRefreshToken 메소드 호출: createRefreshToken 메소드는 RefreshToken을 생성합니다.
