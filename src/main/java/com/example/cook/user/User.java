@@ -19,8 +19,6 @@ public class User {
 
   private String email; // 이메일
   private String password; // 비밀번호
-  private String nickname; // 닉네임
-  private String imageUrl; // 프로필 이미지
   private int age;
   private String city; // 사는 도시
 
