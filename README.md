@@ -38,8 +38,7 @@
   - 입력한 식재료 구매 날짜 및 금액을 바탕으로, 일주일 및 한달과 같이 기간을 설정하여 해당 기간 동안 사용한 식비를 조회할 수 있다.
 
 ## ERD 
-![image](https://github.com/withbeluga/CookProject/assets/128959426/e9125566-13d1-4a53-8158-89fbddd945f1)
-
+![image](https://github.com/withbeluga/CookProject/assets/128959426/ecfb23a0-341d-4ded-bacb-3b2f3138935e)
 
 ## Trouble Shooting
 
