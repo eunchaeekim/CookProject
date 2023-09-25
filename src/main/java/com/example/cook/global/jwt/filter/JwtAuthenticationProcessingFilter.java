@@ -4,6 +4,7 @@ import com.example.cook.global.jwt.service.JwtService;
 import com.example.cook.global.jwt.util.PasswordUtil;
 import com.example.cook.user.User;
 import com.example.cook.user.repository.UserRepository;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -88,9 +89,12 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     log.info("checkAccessTokenAndAuthentication() 호출");
     jwtService.extractAccessToken(request)
         .filter(jwtService::isTokenValid)
-        .ifPresent(accessToken -> jwtService.extractEmail(accessToken)
-            .ifPresent(email -> userRepository.findByEmail(email)
-                .ifPresent(this::saveAuthentication)));
+        .flatMap(accessToken -> jwtService.extractEmail(accessToken))
+        .filter(Objects::nonNull)
+        .flatMap(email -> userRepository.findByEmail(email))
+        .filter(Objects::nonNull)
+        .ifPresent(this::saveAuthentication);
+
 
     filterChain.doFilter(request, response);
   }

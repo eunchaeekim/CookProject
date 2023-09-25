@@ -1,7 +1,9 @@
 package com.example.cook.global.jwt.util;
 
 import java.util.Random;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class PasswordUtil {
 
   public static String generateRandomPassword() {
@@ -23,7 +25,8 @@ public class PasswordUtil {
 
       password.append(charSet[index]);
     }
-    System.out.println(password);
+
+    log.info("password : " + password);
     return password.toString();
     //StringBuffer를 String으로 변환해서 return 하려면 toString()을 사용하면 된다.
   }
