@@ -1,0 +1,5 @@
+package com.example.cook.post;
+
+public enum Amount {
+  ONE_SERVING, TWO_SERVINGS, THREE_SERVINGS, FOUR_SERVINGS, FIVE_SERVINGS, SIX_OR_MORE_SERVINGS
+}
