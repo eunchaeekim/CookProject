@@ -1,5 +1,6 @@
 package com.example.cook.user;
 
+import com.example.cook.comment.Comment;
 import com.example.cook.post.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
@@ -39,6 +40,11 @@ public class User extends BaseEntity {
   @JsonIgnore
   @OneToMany(mappedBy = "user")
   List<Post> board = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  List<Comment> comment = new ArrayList<>();
+
 
   // 유저 권한 설정 메소드
   public void authorizeUser() {
