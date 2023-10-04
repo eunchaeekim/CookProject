@@ -1,5 +1,9 @@
 package com.example.cook.user;
 
+import com.example.cook.post.Post;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +35,10 @@ public class User extends BaseEntity {
   private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
 
   private String refreshToken; // 리프레시 토큰
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  List<Post> board = new ArrayList<>();
 
   // 유저 권한 설정 메소드
   public void authorizeUser() {
