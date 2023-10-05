@@ -1,7 +1,10 @@
 package com.example.cook.user;
 
+import com.example.cook.bookMark.PostBookMark;
 import com.example.cook.comment.Comment;
+import com.example.cook.follow.Follow;
 import com.example.cook.post.Post;
+import com.example.cook.postRecommend.PostRecommend;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +42,28 @@ public class User extends BaseEntity {
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
-  List<Post> board = new ArrayList<>();
+  List<Post> boards = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
-  List<Comment> comment = new ArrayList<>();
+  List<Comment> comments = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  List<PostRecommend> postRecommends = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  List<PostBookMark> postBookMarks = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "follower")
+  List<Follow> followers = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "following")
+  List<Follow> followings = new ArrayList<>();
+
 
 
   // 유저 권한 설정 메소드

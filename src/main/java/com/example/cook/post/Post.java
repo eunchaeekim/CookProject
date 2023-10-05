@@ -1,8 +1,13 @@
 package com.example.cook.post;
 
+import com.example.cook.bookMark.PostBookMark;
 import com.example.cook.comment.Comment;
+import com.example.cook.postRecommend.PostRecommend;
 import com.example.cook.user.BaseEntity;
 import com.example.cook.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,8 +55,16 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "user_Id")
   private User user;
 
-  @ManyToOne
-  @JoinColumn(name = "comment_Id")
-  private Comment comment;
+  @JsonIgnore
+  @OneToMany(mappedBy = "post")
+  List<Comment> comments = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "post")
+  List<PostRecommend> postRecommends = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "post")
+  List<PostBookMark> postBookMarks = new ArrayList<>();
 
 }
