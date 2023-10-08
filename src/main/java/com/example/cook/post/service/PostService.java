@@ -5,13 +5,11 @@ import com.example.cook.post.dto.PostDto;
 import com.example.cook.post.repository.PostRepository;
 import com.example.cook.user.User;
 import com.example.cook.user.repository.UserRepository;
+import java.security.Principal;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +19,8 @@ public class PostService {
   private final UserRepository userRepository;
 
   // 포스팅 등록
-  public void createPost(PostDto postDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-    String email = userDetails.getUsername();
+  public void createPost(PostDto postDto, Principal principal) {
+    String email = principal.getName();
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
@@ -44,11 +39,8 @@ public class PostService {
   }
 
   // 포스팅 수정
-  public void updatePost(Long postId, PostDto postDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-    String email = userDetails.getUsername();
+  public void updatePost(Long postId, PostDto postDto, Principal principal) {
+    String email = principal.getName();
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
@@ -73,11 +65,8 @@ public class PostService {
   }
 
   // 포스팅 삭제
-  public void deletePost(Long postId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-    String email = userDetails.getUsername();
+  public void deletePost(Long postId, Principal principal) {
+    String email = principal.getName();
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
@@ -95,7 +84,19 @@ public class PostService {
   }
 
   // 모든 포스트 조회
-  public Page<Post> findAllPosts(Pageable pageable) {
-    return postRepository.findAll(pageable);
+  public Page<PostDto> findAllPosts(Pageable pageable) {
+    Page<Post> posts = postRepository.findAll(pageable);
+    return posts.map(post -> {
+      PostDto postDto = new PostDto();
+      postDto.setId(post.getId());
+      postDto.setCookTitle(post.getCookTitle());
+      postDto.setCookThumbnailUrl(post.getCookThumbnailUrl());
+      postDto.setCookName(post.getCookName());
+      postDto.setCategory(post.getCategory());
+      postDto.setCookAmount(post.getCookAmount());
+      postDto.setCookTime(post.getCookTime());
+      return postDto;
+    });
   }
+
 }
