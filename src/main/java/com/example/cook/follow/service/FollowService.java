@@ -4,11 +4,9 @@ import com.example.cook.follow.Follow;
 import com.example.cook.follow.repository.FollowRepository;
 import com.example.cook.user.User;
 import com.example.cook.user.repository.UserRepository;
+import java.security.Principal;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,11 +16,8 @@ public class FollowService {
   private final UserRepository userRepository;
   private final FollowRepository followRepository;
 
-  public void follow(Long userIdToFollow) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-    String followerEmail = userDetails.getUsername(); // 현재 로그인한 사용자의 이메일
+  public void follow(Long userIdToFollow, Principal principal) {
+    String followerEmail = principal.getName(); // 현재 로그인한 사용자의 이메일
 
     // 현재 로그인한 사용자 정보 가져오기
     User follower = userRepository.findByEmail(followerEmail)
@@ -51,5 +46,4 @@ public class FollowService {
       followRepository.save(follow);
     }
   }
-
 }

@@ -1,8 +1,8 @@
 package com.example.cook.comment.controller;
 
-import com.example.cook.comment.Comment;
 import com.example.cook.comment.dto.CommentDto;
 import com.example.cook.comment.service.CommentService;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,33 +25,29 @@ public class CommentController {
 
   // 댓글 작성
   @PostMapping
-  public ResponseEntity<String> createComment(@PathVariable Long postId, @RequestBody CommentDto commentDto) {
-    commentService.createComment(postId, commentDto);
+  public ResponseEntity<String> createComment(@PathVariable Long postId, @RequestBody CommentDto commentDto, Principal principal) {
+    commentService.createComment(postId, commentDto, principal);
     return ResponseEntity.ok("comment created successfully!");
   }
 
   // 게시글에 달린 댓글 모두 불러오기
   @GetMapping
   public ResponseEntity<?> getAllComments(@PathVariable Long postId, Pageable pageable) {
-    Page<Comment> comments = commentService.findAllComments(postId, pageable);
+    Page<CommentDto> comments = commentService.findAllComments(postId, pageable);
     return ResponseEntity.ok(comments);
   }
 
   // 댓글 삭제
   @DeleteMapping("/{commentId}")
-  public ResponseEntity<String> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
-    commentService.deleteComment(postId, commentId);
-
+  public ResponseEntity<String> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, Principal principal) {
+    commentService.deleteComment(postId, commentId, principal);
     return ResponseEntity.ok("comment deleted successfully!");
   }
 
   // 댓글 수정
   @PutMapping("/{commentId}")
-  public ResponseEntity<String> updatePost(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentDto commentDto) {
-    commentService.updateComment(postId, commentId, commentDto);
+  public ResponseEntity<String> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentDto commentDto, Principal principal) {
+    commentService.updateComment(postId, commentId, commentDto, principal);
     return ResponseEntity.ok("comment updated successfully!");
   }
-
-
 }
-

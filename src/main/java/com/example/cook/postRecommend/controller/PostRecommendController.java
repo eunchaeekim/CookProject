@@ -1,6 +1,7 @@
 package com.example.cook.postRecommend.controller;
 
 import com.example.cook.postRecommend.service.PostRecommendService;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +17,9 @@ public class PostRecommendController {
   private final PostRecommendService postRecommendService;
 
   @PostMapping
-  public ResponseEntity<String> create(@PathVariable Long postId) {
-    postRecommendService.recommendPost(postId);
+  public ResponseEntity<String> create(@PathVariable Long postId, Principal principal) {
+    postRecommendService.recommendPost(postId, principal);
     return ResponseEntity.ok("Recommend created successfully!");
   }
-
 }
 

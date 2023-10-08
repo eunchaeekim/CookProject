@@ -33,7 +33,7 @@ public class PostBookMark {
   private Long id;
 
   @Column(nullable = false)
-  private boolean status; // true = bookmark, false = boookmark 취소
+  private boolean canceled; // true : bookmark 취소, false : bookmark
 
   @ManyToOne
   @JoinColumn(name = "post_id")
@@ -50,7 +50,7 @@ public class PostBookMark {
 
   public static PostBookMark of(Post post, User user) {
     PostBookMark postBookMark = PostBookMark.builder()
-        .status(true)
+        .canceled(false)
         .post(post)
         .user(user)
         .build();

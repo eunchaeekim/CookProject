@@ -6,11 +6,9 @@ import com.example.cook.postRecommend.PostRecommend;
 import com.example.cook.postRecommend.repository.PostRecommendRepository;
 import com.example.cook.user.User;
 import com.example.cook.user.repository.UserRepository;
+import java.security.Principal;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,12 +19,8 @@ public class PostRecommendService {
   private final UserRepository userRepository;
   private final PostRecommendRepository postRecommendRepository;
 
-  public void recommendPost(Long postId) {
-
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-    String email = userDetails.getUsername();
+  public void recommendPost(Long postId, Principal principal) {
+    String email = principal.getName();
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
@@ -38,14 +32,11 @@ public class PostRecommendService {
       throw new RuntimeException("포스팅 글이 존재하지 않습니다");
     }
 
-    // 이전에 좋아요 누른 적 있는지 확인
-    Optional<PostRecommend> recommend = postRecommendRepository.findByPostAndUser(post.get(), user);
-    if (recommend.isEmpty()) {  // 좋아요 누른적 없음
-      PostRecommend postRecommend = PostRecommend.of(post.get(), user);
-      postRecommendRepository.save(postRecommend);
-    } else { // 좋아요 누른 적 있음
-      postRecommendRepository.delete(recommend.get()); // 좋아요 눌렀던 정보를 지운다.
-      postRecommendRepository.flush();
-    }
+    // 이전에 좋아요 누른 적 있는지 확인 하여 상태 변경
+    postRecommendRepository.findByPostAndUser(post.get(), user)
+        .ifPresentOrElse(
+            existingRecommend -> postRecommendRepository.delete(existingRecommend),
+            () -> postRecommendRepository.save(PostRecommend.of(post.get(), user))
+        );
   }
 }

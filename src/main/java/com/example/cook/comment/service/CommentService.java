@@ -7,12 +7,10 @@ import com.example.cook.post.Post;
 import com.example.cook.post.repository.PostRepository;
 import com.example.cook.user.User;
 import com.example.cook.user.repository.UserRepository;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,11 +22,8 @@ public class CommentService {
   private final UserRepository userRepository;
 
   // 댓글 작성
-  public void createComment(Long postId, CommentDto commentDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-    String email = userDetails.getUsername();
+  public void createComment(Long postId, CommentDto commentDto, Principal principal) {
+    String email = principal.getName();
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
@@ -43,21 +38,23 @@ public class CommentService {
     comment.setPost(post);
 
     commentRepository.save(comment);
-
   }
-
 
   // 게시글에 달린 댓글 모두 불러오기
-  public Page<Comment> findAllComments(Long postId, Pageable pageable) {
-    return commentRepository.findAllByPostId(postId, pageable);
+  public Page<CommentDto> findAllComments(Long postId, Pageable pageable) {
+    Page<Comment> comments = commentRepository.findAllByPostId(postId, pageable);
+    return comments.map(comment -> {
+      CommentDto commentDto = new CommentDto();
+      commentDto.setId(comment.getId());
+      commentDto.setContent(comment.getContent());
+      return commentDto;
+    });
   }
 
-  // 댓글 삭제
-  public void deleteComment(Long postId, Long commentId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-    String email = userDetails.getUsername();
+  // 댓글 삭제
+  public void deleteComment(Long postId, Long commentId, Principal principal) {
+    String email = principal.getName();
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
@@ -72,18 +69,15 @@ public class CommentService {
     // 게시판의 username과 로그인 유저의 username 비교
     if (!email.equals(comment.getUser().getEmail())) {
       throw new RuntimeException("작성자만 삭제할 수 있습니다.");
-    } else {
-      commentRepository.delete(comment);
     }
+    commentRepository.delete(comment);
 
   }
 
   // 댓글 수정
-  public void updateComment(Long postId, Long commentId, CommentDto commentDto) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-    String email = userDetails.getUsername();
+  public void updateComment(Long postId, Long commentId, CommentDto commentDto, Principal
+      principal) {
+    String email = principal.getName();
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
@@ -103,6 +97,4 @@ public class CommentService {
       commentRepository.save(comment);
     }
   }
-
 }
-

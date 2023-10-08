@@ -1,6 +1,7 @@
 package com.example.cook.follow.controller;
 
 import com.example.cook.follow.service.FollowService;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,8 @@ public class FollowController {
   private final FollowService followService;
 
   @PostMapping
-  public ResponseEntity<String> followUser(@PathVariable Long userId) {
-    followService.follow(userId);
+  public ResponseEntity<String> followUser(@PathVariable Long userId, Principal principal) {
+    followService.follow(userId, principal);
     return ResponseEntity.ok("Follow created successfully!");
   }
 }
