@@ -8,6 +8,7 @@ import com.example.cook.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -66,5 +67,13 @@ public class Post extends BaseEntity {
   @JsonIgnore
   @OneToMany(mappedBy = "post")
   List<PostBookMark> postBookMarks = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  List<Ingredient> ingredients = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  List<CookMethod> cookMethods = new ArrayList<>();
 
 }
