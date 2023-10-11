@@ -6,6 +6,7 @@ import com.example.cook.post.Category;
 import com.example.cook.post.Time;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PostDto {
 
   private Long id; //id
@@ -26,6 +28,7 @@ public class PostDto {
   //private boolean isPublic; // 게시글 공개여부
   private List<IngredientDto> ingredients;
   private List<CookMethodDto> cookMethods; // 요리 방법
+
 
 }
 
