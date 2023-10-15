@@ -16,7 +16,7 @@
 
 - 요리 레시피 게시글 등록/수정/삭제 기능 
   - 사용자는 등록하고자 하는 요리에 대한 내용을 작성할 수 있다.
-    (게시글 제목(cook_title), 썸네일 사진(cook_thumbnail_url), 요리 메뉴명(cook_name), 카테고리(category), 몇인분 기준(cook_amount), 조리 시간(cook_time), 요리 방법 설명 및 사진 (cook_method_description, cook_method_photo_url), 들어가는 식재료 이름 및 필요한 양(cook_ingredient, cook_ingredient_amount), 식재료 구매하기(쿠팡연동,크롤링))
+    (게시글 제목, 썸네일 사진, 요리 메뉴명, 카테고리, 몇인분 기준, 조리 시간, 요리 방법 설명 및 사진, 들어가는 식재료 이름 및 필요한 양
   - 사진 : amazon s3 같은 storage 서비스 이용
   - 커뮤니티 공개 여부를 지정할 수 있다. (공개/ 비공개)
 
@@ -38,7 +38,7 @@
   - 입력한 식재료 구매 날짜 및 금액을 바탕으로, 일주일 및 한달과 같이 기간을 설정하여 해당 기간 동안 사용한 식비를 조회할 수 있다.
 
 ## ERD 
-![image](https://github.com/withbeluga/CookProject/assets/128959426/ecfb23a0-341d-4ded-bacb-3b2f3138935e)
+![image](https://github.com/withbeluga/CookProject/assets/128959426/144f7a71-9e31-41cb-94ba-aa677e488ec8)
 
 ## Trouble Shooting
 
