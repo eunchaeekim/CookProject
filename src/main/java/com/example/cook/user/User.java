@@ -2,6 +2,7 @@ package com.example.cook.user;
 
 import com.example.cook.bookMark.PostBookMark;
 import com.example.cook.comment.Comment;
+import com.example.cook.costManagement.CostManagement;
 import com.example.cook.follow.Follow;
 import com.example.cook.post.Post;
 import com.example.cook.postRecommend.PostRecommend;
@@ -63,6 +64,10 @@ public class User extends BaseEntity {
   @JsonIgnore
   @OneToMany(mappedBy = "following")
   List<Follow> followings = new ArrayList<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  List<CostManagement> costManagements = new ArrayList<>();
 
 
 
