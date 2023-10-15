@@ -6,10 +6,10 @@ import com.example.cook.costManagement.repository.CostManagementRepository;
 import com.example.cook.post.Ingredient;
 import com.example.cook.post.Post;
 import com.example.cook.post.repository.PostRepository;
-import com.example.cook.post.service.PostService;
 import com.example.cook.user.User;
 import com.example.cook.user.repository.UserRepository;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -133,5 +133,30 @@ public class CostManagementService {
       return costManagementDto;
     });
   }
+
+  // 기간별 사용한 식비 금액 계산
+  public Long calculateCostManagementByDateRange(LocalDate startDate, LocalDate endDate, Principal principal) {
+    String email = principal.getName();
+
+    // UserDetails에서 사용자 정보 가져오기
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+    // 사용자의 식비 목록을 가져옵니다.
+    List<CostManagement> costManagements = costManagementRepository.findByUser(user);
+
+    // 기간 내에 속하는 항목만 필터링하고 금액을 더합니다.
+    Long totalCost = costManagements.stream()
+        .filter(costManagement -> (costManagement.getManagementIngredientBuyDate().isEqual(startDate)
+            || costManagement.getManagementIngredientBuyDate().isAfter(startDate))
+            && (costManagement.getManagementIngredientBuyDate().isEqual(endDate)
+            || costManagement.getManagementIngredientBuyDate().isBefore(endDate)))
+        .mapToLong(CostManagement::getManagementIngredientCost)
+        .sum();
+
+    return totalCost;
+  }
+
+
 
 }
