@@ -1,5 +1,9 @@
 package com.example.cook.costManagement;
 
+import com.example.cook.costManagement.dto.CostManagementDto;
+import com.example.cook.post.Ingredient;
+import com.example.cook.post.Post;
+import com.example.cook.post.dto.IngredientDto;
 import com.example.cook.user.User;
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -38,5 +42,22 @@ public class CostManagement {
   @JoinColumn(name = "user_Id")
   private User user;
 
+  public static CostManagement createCostManagementFromDto(CostManagementDto costManagementDto, User user) {
+    CostManagement costManagement = new CostManagement();
+    costManagement.setUser(user);
+    costManagement.setManagementIngredient(costManagementDto.getManagementIngredient());
+    costManagement.setManagementIngredientCost(costManagementDto.getManagementIngredientCost());
+    costManagement.setManagementIngredientBuyDate(costManagementDto.getManagementIngredientBuyDate());
+    return costManagement;
+  }
+
+  public static CostManagement createCostManagementFromDto(CostManagementDto costManagementDto, User user, String ingredientName) {
+    CostManagement costManagement = new CostManagement();
+    costManagement.setUser(user);
+    costManagement.setManagementIngredient(ingredientName);
+    costManagement.setManagementIngredientCost(costManagementDto.getManagementIngredientCost());
+    costManagement.setManagementIngredientBuyDate(costManagementDto.getManagementIngredientBuyDate());
+    return costManagement;
+  }
 
 }

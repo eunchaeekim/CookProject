@@ -12,6 +12,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,12 +34,7 @@ public class CostManagementService {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-    CostManagement costManagement = new CostManagement();
-    costManagement.setUser(user);
-    costManagement.setManagementIngredient(costManagementDto.getManagementIngredient());
-    costManagement.setManagementIngredientCost(costManagementDto.getManagementIngredientCost());
-    costManagement.setManagementIngredientBuyDate(costManagementDto.getManagementIngredientBuyDate());
-
+    CostManagement costManagement = CostManagement.createCostManagementFromDto(costManagementDto, user);
     costManagementRepository.save(costManagement);
 
   }
@@ -57,20 +53,12 @@ public class CostManagementService {
     // 게시물에 연결된 식재료 가져오기
     List<Ingredient> ingredients = post.getIngredients();
 
-    List<CostManagement> costManagements = new ArrayList<>();
-
-    for (Ingredient ingredient : ingredients) {
-      String ingredientName = ingredient.getCookIngredient();
-
-      CostManagement costManagement = new CostManagement();
-      costManagement.setUser(user);
-      costManagement.setManagementIngredient(ingredientName);
-      costManagement.setManagementIngredientCost(costManagementDto.getManagementIngredientCost());
-      costManagement.setManagementIngredientBuyDate(costManagementDto.getManagementIngredientBuyDate());
-
-      // 각 CostManagement 엔티티를 리스트에 추가
-      costManagements.add(costManagement);
-    }
+    List<CostManagement> costManagements = ingredients.stream()
+        .map(ingredient -> {
+          String ingredientName = ingredient.getCookIngredient();
+          return CostManagement.createCostManagementFromDto(costManagementDto, user, ingredientName);
+        })
+        .collect(Collectors.toList());
 
     // CostManagement 엔티티 리스트를 저장
     costManagementRepository.saveAll(costManagements);
@@ -147,10 +135,8 @@ public class CostManagementService {
 
     // 기간 내에 속하는 항목만 필터링하고 금액을 더합니다.
     Long totalCost = costManagements.stream()
-        .filter(costManagement -> (costManagement.getManagementIngredientBuyDate().isEqual(startDate)
-            || costManagement.getManagementIngredientBuyDate().isAfter(startDate))
-            && (costManagement.getManagementIngredientBuyDate().isEqual(endDate)
-            || costManagement.getManagementIngredientBuyDate().isBefore(endDate)))
+        .filter(costManagement -> (!costManagement.getManagementIngredientBuyDate().isBefore(startDate))
+            && (!costManagement.getManagementIngredientBuyDate().isAfter(endDate)))
         .mapToLong(CostManagement::getManagementIngredientCost)
         .sum();
 
