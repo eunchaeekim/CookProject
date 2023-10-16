@@ -1,5 +1,8 @@
 package com.example.cook.follow.service;
 
+import com.example.cook.exception.impl.NotAllowFollowException;
+import com.example.cook.exception.impl.NotExistFollowerExcepton;
+import com.example.cook.exception.impl.NotExistUserException;
 import com.example.cook.follow.Follow;
 import com.example.cook.follow.repository.FollowRepository;
 import com.example.cook.user.User;
@@ -21,15 +24,15 @@ public class FollowService {
 
     // 현재 로그인한 사용자 정보 가져오기
     User follower = userRepository.findByEmail(followerEmail)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     // 팔로우 대상 사용자 정보 가져오기
     User following = userRepository.findById(userIdToFollow)
-        .orElseThrow(() -> new RuntimeException("팔로우 대상 사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistFollowerExcepton::new);
 
     // 팔로우 대상이 자기 자신인지 확인
     if (follower.getId().equals(userIdToFollow)) {
-      throw new RuntimeException("자기 자신을 팔로우할 수 없습니다.");
+      throw new NotAllowFollowException();
     }
 
     Optional<Follow> existingFollow = followRepository.findByFollowerAndFollowing(follower, following);

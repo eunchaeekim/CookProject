@@ -3,6 +3,10 @@ package com.example.cook.costManagement.service;
 import com.example.cook.costManagement.CostManagement;
 import com.example.cook.costManagement.dto.CostManagementDto;
 import com.example.cook.costManagement.repository.CostManagementRepository;
+import com.example.cook.exception.impl.NotExistCostListException;
+import com.example.cook.exception.impl.NotExistPostException;
+import com.example.cook.exception.impl.NotExistUserException;
+import com.example.cook.exception.impl.OnlyWirterException;
 import com.example.cook.post.Ingredient;
 import com.example.cook.post.Post;
 import com.example.cook.post.repository.PostRepository;
@@ -32,7 +36,7 @@ public class CostManagementService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     CostManagement costManagement = CostManagement.createCostManagementFromDto(costManagementDto, user);
     costManagementRepository.save(costManagement);
@@ -45,10 +49,10 @@ public class CostManagementService {
 
     // UserDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("포스팅이 존재하지 않습니다."));
+        .orElseThrow(NotExistPostException::new);
 
     // 게시물에 연결된 식재료 가져오기
     List<Ingredient> ingredients = post.getIngredients();
@@ -71,14 +75,14 @@ public class CostManagementService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     CostManagement costManagement = costManagementRepository.findById(costManagementId)
-        .orElseThrow(() -> new RuntimeException("식비 내용이 존재하지 않습니다."));
+        .orElseThrow(NotExistCostListException::new);
 
     // 게시판의 username과 로그인 유저의 username 비교
     if (!email.equals(costManagement.getUser().getEmail())) {
-      throw new RuntimeException("작성자만 수정할 수 있습니다.");
+      throw new OnlyWirterException();
     }
 
     costManagement.setUser(user);
@@ -95,14 +99,14 @@ public class CostManagementService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     CostManagement costManagement = costManagementRepository.findById(costManagementId)
-        .orElseThrow(() -> new RuntimeException("식비 내용이 존재하지 않습니다."));
+        .orElseThrow(NotExistCostListException::new);
 
     // 게시판의 username과 로그인 유저의 username 비교
     if (!email.equals(costManagement.getUser().getEmail())) {
-      throw new RuntimeException("작성자만 삭제할 수 있습니다.");
+      throw new OnlyWirterException();
     }
 
     costManagementRepository.delete(costManagement);
@@ -128,7 +132,7 @@ public class CostManagementService {
 
     // UserDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     // 사용자의 식비 목록을 가져옵니다.
     List<CostManagement> costManagements = costManagementRepository.findByUser(user);
@@ -142,7 +146,5 @@ public class CostManagementService {
 
     return totalCost;
   }
-
-
 
 }

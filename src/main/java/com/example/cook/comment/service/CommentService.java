@@ -3,6 +3,10 @@ package com.example.cook.comment.service;
 import com.example.cook.comment.Comment;
 import com.example.cook.comment.dto.CommentDto;
 import com.example.cook.comment.repository.CommentRepository;
+import com.example.cook.exception.impl.NotExistCommentException;
+import com.example.cook.exception.impl.NotExistPostException;
+import com.example.cook.exception.impl.NotExistUserException;
+import com.example.cook.exception.impl.OnlyWirterException;
 import com.example.cook.post.Post;
 import com.example.cook.post.repository.PostRepository;
 import com.example.cook.user.User;
@@ -27,10 +31,10 @@ public class CommentService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("포스팅을 찾을 수 없습니다."));
+        .orElseThrow(NotExistPostException::new);
 
     Comment comment = new Comment();
     comment.setContent(commentDto.getContent());
@@ -58,18 +62,19 @@ public class CommentService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("포스팅을 찾을 수 없습니다."));
+        .orElseThrow(NotExistPostException::new);
 
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new RuntimeException("댓글이 존재하지 않습니다."));
+        .orElseThrow(NotExistCommentException::new);
 
     // 게시판의 username과 로그인 유저의 username 비교
     if (!email.equals(comment.getUser().getEmail())) {
-      throw new RuntimeException("작성자만 삭제할 수 있습니다.");
+      throw new OnlyWirterException();
     }
+
     commentRepository.delete(comment);
 
   }
@@ -81,17 +86,17 @@ public class CommentService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("포스팅을 찾을 수 없습니다."));
+        .orElseThrow(NotExistPostException::new);
 
     Comment comment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new RuntimeException("댓글이 존재하지 않습니다."));
+        .orElseThrow(NotExistCommentException::new);
 
     // 댓글의 username과 로그인 유저의 username 비교
     if (!email.equals(comment.getUser().getEmail())) {
-      throw new RuntimeException("작성자만 수정할 수 있습니다.");
+      throw new OnlyWirterException();
     } else {
       comment.setContent(commentDto.getContent());
       commentRepository.save(comment);
