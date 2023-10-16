@@ -1,5 +1,6 @@
 package com.example.cook.user.service;
 
+import com.example.cook.exception.impl.AlreadyUserException;
 import com.example.cook.user.Role;
 import com.example.cook.user.User;
 import com.example.cook.user.dto.UserSignUpDto;
@@ -22,7 +23,7 @@ public class UserService {
   public void signUp(UserSignUpDto userSignUpDto) throws Exception {
 
     if (userRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
-      throw new Exception("이미 존재하는 이메일입니다.");
+      throw new AlreadyUserException();
     }
 
 

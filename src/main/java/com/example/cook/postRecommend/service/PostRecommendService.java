@@ -1,5 +1,7 @@
 package com.example.cook.postRecommend.service;
 
+import com.example.cook.exception.impl.NotExistPostException;
+import com.example.cook.exception.impl.NotExistUserException;
 import com.example.cook.post.Post;
 import com.example.cook.post.repository.PostRepository;
 import com.example.cook.postRecommend.PostRecommend;
@@ -24,12 +26,12 @@ public class PostRecommendService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Optional<Post> post = postRepository.findById(postId);
 
     if (post.isEmpty()) {
-      throw new RuntimeException("포스팅 글이 존재하지 않습니다");
+      throw new NotExistPostException();
     }
 
     // 이전에 좋아요 누른 적 있는지 확인 하여 상태 변경

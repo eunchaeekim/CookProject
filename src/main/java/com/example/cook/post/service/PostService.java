@@ -5,6 +5,9 @@ import static com.example.cook.post.CookMethod.createCookMethodFromDto;
 import static com.example.cook.post.Ingredient.createIngredientDtoFromEntity;
 import static com.example.cook.post.Ingredient.createIngredientFromDto;
 
+import com.example.cook.exception.impl.NotExistPostException;
+import com.example.cook.exception.impl.NotExistUserException;
+import com.example.cook.exception.impl.OnlyWirterException;
 import com.example.cook.post.CookMethod;
 import com.example.cook.post.Ingredient;
 import com.example.cook.post.Post;
@@ -40,7 +43,7 @@ public class PostService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Post post = new Post();
     post.setUser(user);
@@ -86,14 +89,14 @@ public class PostService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("포스팅이 존재하지 않습니다."));
+        .orElseThrow(NotExistPostException::new);
 
     // 게시판의 username과 로그인 유저의 username 비교
     if (!email.equals(post.getUser().getEmail())) {
-      throw new RuntimeException("작성자만 수정할 수 있습니다.");
+      throw new OnlyWirterException();
     }
 
     ingredientRepository.deleteByPostId(postId);
@@ -130,14 +133,14 @@ public class PostService {
 
     // userDetails에서 사용자 정보 가져오기
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("포스팅이 존재하지 않습니다."));
+        .orElseThrow(NotExistPostException::new);
 
     // 게시판의 username과 로그인 유저의 username 비교
     if (!email.equals(post.getUser().getEmail())) {
-      throw new RuntimeException("작성자만 삭제할 수 있습니다.");
+      throw new OnlyWirterException();
     }
 
     postRepository.delete(post);

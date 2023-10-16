@@ -3,6 +3,8 @@ package com.example.cook.bookMark.service;
 
 import com.example.cook.bookMark.PostBookMark;
 import com.example.cook.bookMark.repository.PostBookMarkRepository;
+import com.example.cook.exception.impl.NotExistPostException;
+import com.example.cook.exception.impl.NotExistUserException;
 import com.example.cook.post.Post;
 import com.example.cook.post.repository.PostRepository;
 import com.example.cook.user.User;
@@ -10,6 +12,7 @@ import com.example.cook.user.repository.UserRepository;
 import java.security.Principal;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,10 +27,10 @@ public class PostBookMarkService {
     String email = principal.getName(); // 현재 사용자의 이메일 또는 사용자 식별자를 가져옵니다.
 
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        .orElseThrow(NotExistUserException::new);
 
     Post post = postRepository.findById(postId)
-        .orElseThrow(() -> new RuntimeException("포스팅 글이 존재하지 않습니다"));
+        .orElseThrow(NotExistPostException::new);
 
     // 이전에 좋아요 누른 적 있는지 확인
     Optional<PostBookMark> bookMark = postBookMarkRepository.findByPostAndUser(post, user);
